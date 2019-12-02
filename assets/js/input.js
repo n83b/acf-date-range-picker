@@ -1,6 +1,6 @@
-(function($){
-	
-	
+(function ($) {
+
+
 	/**
 	*  initialize_field
 	*
@@ -12,59 +12,55 @@
 	*  @param	n/a
 	*  @return	n/a
 	*/
-	
-	function initialize_field( $field ) {
-		
+
+	function initialize_field($field) {
+
 		//$field.doStuff();
 		$inputFrom = $field.find('.wsr-date-range-from');
 		$inputTo = $field.find('.wsr-date-range-to');
 		$fieldToSave = $field.find('.field-to-save');
 
-		from = $inputFrom
-			.datepicker({
-				defaultDate: "+1w",
-				changeMonth: true,
-				dateFormat: "dd/mm/yy",
-				numberOfMonths: 2
-			})
-		  	.on( "change", function() {
-				to.datepicker( "option", "minDate", this.value);
-				//addDatesToHiddenField();
-		  	}),
-		to = $inputTo
-			.datepicker({
-		  		defaultDate: "+1w",
-				changeMonth: true,
-				dateFormat: "dd/mm/yy",
-	  			numberOfMonths: 2
-			})
-			.on( "change", function() {
-				from.datepicker( "option", "maxDate", this.value );
-				//addDatesToHiddenField();
-			});	  
+		from = $inputFrom.datepicker({
+			changeMonth: true,
+			dateFormat: "dd/mm/yy",
+			numberOfMonths: 1
+		}).on("change", function () {
+			to.datepicker("option", "minDate", this.value);
+		});
 
-		$inputFrom.change(function(){
+		to = $inputTo.datepicker({
+			changeMonth: true,
+			dateFormat: "dd/mm/yy",
+			numberOfMonths: 1
+		}).on("change", function () {
+			from.datepicker("option", "maxDate", this.value);
+		});
+
+		from.datepicker("option", "maxDate", to.datepicker('getDate'));
+		to.datepicker("option", "minDate", from.datepicker('getDate'));
+
+		$inputFrom.change(function () {
 			addDatesToHiddenField();
 		});
 
-		$inputTo.change(function(){
+		$inputTo.change(function () {
 			addDatesToHiddenField();
 		});
 
-		function addDatesToHiddenField(){
+		function addDatesToHiddenField() {
 			$from = $inputFrom.val();
 			$to = $inputTo.val();
-			if ( (!$from) && (!$to) ){
+			if ((!$from) && (!$to)) {
 				$fieldToSave.val("");
-			}else{
+			} else {
 				$fieldToSave.val($from + '--' + $to);
 			}
 		}
 	}
-	
-	
-	if( typeof acf.add_action !== 'undefined' ) {
-	
+
+
+	if (typeof acf.add_action !== 'undefined') {
+
 		/*
 		*  ready & append (ACF5)
 		*
@@ -75,13 +71,13 @@
 		*  @param	n/a
 		*  @return	n/a
 		*/
-		
+
 		acf.add_action('ready_field/type=date_range_picker', initialize_field);
 		acf.add_action('append_field/type=date_range_picker', initialize_field);
-		
-		
+
+
 	} else {
-		
+
 		/*
 		*  acf/setup_fields (ACF4)
 		*
@@ -91,19 +87,19 @@
 		*  @param	element		An element which contains the new HTML
 		*  @return	n/a
 		*/
-		
-		$(document).on('acf/setup_fields', function(e, postbox){
-			
+
+		$(document).on('acf/setup_fields', function (e, postbox) {
+
 			// find all relevant fields
-			$(postbox).find('.field[data-field_type="date_range_picker"]').each(function(){
-				
+			$(postbox).find('.field[data-field_type="date_range_picker"]').each(function () {
+
 				// initialize
-				initialize_field( $(this) );
-				
+				initialize_field($(this));
+
 			});
-		
+
 		});
-	
+
 	}
 
 })(jQuery);
